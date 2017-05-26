@@ -1,8 +1,7 @@
 package com.gastonsanguinetti.contacts.view;
 
-import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,23 +16,26 @@ import android.view.ViewGroup;
 import com.gastonsanguinetti.contacts.R;
 import com.gastonsanguinetti.contacts.model.Contact;
 import com.gastonsanguinetti.contacts.viewmodel.ContactListViewModel;
-import com.gastonsanguinetti.contacts.viewmodel.UseCaseViewModel;
 
 import java.util.List;
 
-public class ContactListFragment extends LifecycleFragment {
+public class ContactListFragment extends UseCaseFragment<List<Contact>> {
 	
 	View loadingLayout;
 	View errorLayout;
 	RecyclerView contactListRecyclerView;
 	ContactListAdapter contactListAdapter;
 	
-	ContactListViewModel contactListViewModel;
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_contact_list, container, false);
+	}
+	
+	@NonNull
+	@Override
+	protected Class getViewModelClass() {
+		return ContactListViewModel.class;
 	}
 	
 	@Override
@@ -58,64 +60,46 @@ public class ContactListFragment extends LifecycleFragment {
 		contactListAdapter = new ContactListAdapter();
 		contactListRecyclerView.setAdapter(contactListAdapter);
 		
-		//Create the viewmodel
-		contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
-		
 		// Start observing events
-		contactListViewModel.getData().observe(this,  new Observer<List<Contact>>() {
+		getViewModel().getData().observe(this,  new Observer<List<Contact>>() {
 			@Override
 			public void onChanged(@Nullable List<Contact> contacts) {
 				contactListAdapter.setContacts(contacts);
 			}
 		});
 		
-		contactListViewModel.getUseCaseStatus().observe(this, new Observer<UseCaseViewModel.Status>() {
-			@Override
-			public void onChanged(@Nullable UseCaseViewModel.Status status) {
-				onUseCaseStatusChanged(status);
-			}
-		});
-		
-		
 	}
 	
-	private void onUseCaseStatusChanged(UseCaseViewModel.Status status) {
+	@Override
+	protected void onUseCaseLoading() {
+		loadingLayout.setVisibility(View.VISIBLE);
+		contactListRecyclerView.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.GONE);
+	}
+	
+	@Override
+	protected void onUseCaseError() {
+		loadingLayout.setVisibility(View.GONE);
+		contactListRecyclerView.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.VISIBLE);
 		
-		switch (status) {
-			
-			case LOADING:
-				loadingLayout.setVisibility(View.VISIBLE);
-				contactListRecyclerView.setVisibility(View.GONE);
-				errorLayout.setVisibility(View.GONE);
-				break;
-			
-			case ERROR:
-				loadingLayout.setVisibility(View.GONE);
-				contactListRecyclerView.setVisibility(View.GONE);
-				errorLayout.setVisibility(View.VISIBLE);
-				
-				final Snackbar errorSnackbar = Snackbar.make(getView(),
-						R.string.error_msg,
-						Snackbar.LENGTH_INDEFINITE);
-				errorSnackbar.setAction(R.string.retry_button, new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						contactListViewModel.getData();
-					}
-				});
-				errorSnackbar.show();
-				
-				break;
-			
-			case SUCCESS:
-				loadingLayout.setVisibility(View.GONE);
-				contactListRecyclerView.setVisibility(View.VISIBLE);
-				errorLayout.setVisibility(View.GONE);
-				break;
-			
-			default:
-				break;
-		}
+		final Snackbar errorSnackbar = Snackbar.make(getView(),
+				R.string.error_msg,
+				Snackbar.LENGTH_INDEFINITE);
+		errorSnackbar.setAction(R.string.retry_button, new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				getViewModel().getData();
+			}
+		});
+		errorSnackbar.show();
+	}
+	
+	@Override
+	protected void onUseCaseFinished() {
+		loadingLayout.setVisibility(View.GONE);
+		contactListRecyclerView.setVisibility(View.VISIBLE);
+		errorLayout.setVisibility(View.GONE);
 	}
 	
 }
