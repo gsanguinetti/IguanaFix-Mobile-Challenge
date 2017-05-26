@@ -5,8 +5,8 @@
 La idea de este challenge es poder ver con una simple app tus skills. Todo lo que creas necesario comentarlo en el proyecto.
 Podés usar todas las librerias que creas necesarias siempre que sean open source.
 Objetivos de la app
-Poder mostrar una lista de usuarios obtenidas desde aquí 
-Poder entrar al detalle de un usuario obteniendo el detalle desde aquí
+* Poder mostrar una lista de usuarios
+* Poder entrar al detalle de un usuario obteniendo el detalle
 
 ## Especificaciones
 
