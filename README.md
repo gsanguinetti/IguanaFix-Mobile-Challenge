@@ -1,5 +1,16 @@
 # IguanaFix-Mobile-Challenge
 
+## Comentarios
+
+La app desarrollada implementa la solución al challenge. Aproveché la ocasión para probar una nueva library de Google llamada [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel.html), que presentaron la semana pasada en la I/O, en el marco de una serie de utilidades llamadas [Architecture Components](https://developer.android.com/topic/libraries/architecture/index.html). La app está diseñada con un patrón de arquitectura MVVM, muy sencillo, haciendo uso de las libraries antes mencionadas.
+
+## Herramientas utilizadas
+
+* Para layouting, usé los lineamientos de Material Design.
+* Glide para la cargar y transformar imágenes
+* Retrofit para la capa http
+------------------------------------------------------------------------------------------------------------------
+
 ## Overview
 
 La idea de este challenge es poder ver con una simple app tus skills. Todo lo que creas necesario comentarlo en el proyecto.
