@@ -17,13 +17,13 @@ public abstract class UseCaseViewModel<DATA> extends ViewModel {
 	
 	public UseCaseViewModel() {
 		this.useCaseStatus = new MutableLiveData<>();
+		this.data = new MutableLiveData<>();
 		setUseCaseStatus(Status.IDLE);
 	}
 	
 	public MutableLiveData<DATA> getData() {
-		if(data == null) {
+		if (data.getValue() == null) {
 			useCaseStatus.setValue(Status.LOADING);
-			this.data = new MutableLiveData<>();
 			doLoadData();
 		}
 		return data;

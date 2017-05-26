@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,8 +24,11 @@ import java.util.List;
 public class ContactListFragment extends LifecycleFragment {
 	
 	View loadingLayout;
+	View errorLayout;
 	RecyclerView contactListRecyclerView;
 	ContactListAdapter contactListAdapter;
+	
+	ContactListViewModel contactListViewModel;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +49,7 @@ public class ContactListFragment extends LifecycleFragment {
 		//Get views
 		contactListRecyclerView = (RecyclerView) view.findViewById(R.id.list);
 		loadingLayout = view.findViewById(R.id.loading);
+		errorLayout = view.findViewById(R.id.errorImage);
 		
 		//Initialize contact list
 		contactListRecyclerView.setHasFixedSize(true);
@@ -54,7 +59,7 @@ public class ContactListFragment extends LifecycleFragment {
 		contactListRecyclerView.setAdapter(contactListAdapter);
 		
 		//Create the viewmodel
-		final ContactListViewModel contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
+		contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
 		
 		// Start observing events
 		contactListViewModel.getData().observe(this,  new Observer<List<Contact>>() {
@@ -67,29 +72,50 @@ public class ContactListFragment extends LifecycleFragment {
 		contactListViewModel.getUseCaseStatus().observe(this, new Observer<UseCaseViewModel.Status>() {
 			@Override
 			public void onChanged(@Nullable UseCaseViewModel.Status status) {
-				switch (status) {
-					
-					case LOADING:
-						loadingLayout.setVisibility(View.VISIBLE);
-						contactListRecyclerView.setVisibility(View.GONE);
-						break;
-					
-					case ERROR:
-						loadingLayout.setVisibility(View.GONE);
-						contactListRecyclerView.setVisibility(View.GONE);
-						break;
-					
-					case SUCCESS:
-						loadingLayout.setVisibility(View.GONE);
-						contactListRecyclerView.setVisibility(View.VISIBLE);
-						break;
-					
-					default: break;
-				}
+				onUseCaseStatusChanged(status);
 			}
 		});
 		
 		
+	}
+	
+	private void onUseCaseStatusChanged(UseCaseViewModel.Status status) {
+		
+		switch (status) {
+			
+			case LOADING:
+				loadingLayout.setVisibility(View.VISIBLE);
+				contactListRecyclerView.setVisibility(View.GONE);
+				errorLayout.setVisibility(View.GONE);
+				break;
+			
+			case ERROR:
+				loadingLayout.setVisibility(View.GONE);
+				contactListRecyclerView.setVisibility(View.GONE);
+				errorLayout.setVisibility(View.VISIBLE);
+				
+				final Snackbar errorSnackbar = Snackbar.make(getView(),
+						R.string.error_msg,
+						Snackbar.LENGTH_INDEFINITE);
+				errorSnackbar.setAction(R.string.retry_button, new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						contactListViewModel.getData();
+					}
+				});
+				errorSnackbar.show();
+				
+				break;
+			
+			case SUCCESS:
+				loadingLayout.setVisibility(View.GONE);
+				contactListRecyclerView.setVisibility(View.VISIBLE);
+				errorLayout.setVisibility(View.GONE);
+				break;
+			
+			default:
+				break;
+		}
 	}
 	
 }

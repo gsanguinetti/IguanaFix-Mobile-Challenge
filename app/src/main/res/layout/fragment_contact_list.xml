@@ -32,6 +32,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
+        <ImageView
+            android:id="@+id/errorImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cloud_off_black_48px"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
