@@ -1,5 +1,6 @@
 package com.gastonsanguinetti.contacts.view;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 	}
 	
 	@Override
-	public void onBindViewHolder(ContactViewHolder holder, int position) {
+	public void onBindViewHolder(final ContactViewHolder holder, final int position) {
 		holder.contactNameTextView.setText(contacts.get(position).getFullName());
 		
 		//Config thumb
@@ -47,6 +48,16 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 				.bitmapTransform(new CropCircleTransformation(holder.contactImageView.getContext()))
 				.thumbnail(thumbnailRequest)
 				.into(holder.contactImageView);
+		
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent detailsIntent = new Intent(holder.itemView.getContext(), ContactDetailsActivity.class);
+				detailsIntent.putExtra(ContactDetailsFragment.CONTACT_EXTRA, contacts.get(position));
+				
+				holder.itemView.getContext().startActivity(detailsIntent);
+			}
+		});
 	}
 	
 	@Override

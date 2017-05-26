@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">Contactos</string>
-    <string name="error_msg">Ups, parece que no tienes conexión a internet.</string>
-    <string name="retry_button">Reintentar</string>
+    <string name="app_name">Contacts</string>
+    <string name="error_msg">Ups, seems like you don\'t have internet connection.</string>
+    <string name="retry_button">Retry</string>
+
+    <string name="home">Home</string>
+    <string name="work">Work</string>
+
+    <string name="birthday">Birthday</string>
 </resources>

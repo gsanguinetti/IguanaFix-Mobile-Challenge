@@ -8,7 +8,7 @@ public class Phone implements Serializable {
 	
 	private String type;
 	
-	private Object number;
+	private String number;
 	
 	public String getType() {
 		return type;
@@ -18,11 +18,11 @@ public class Phone implements Serializable {
 		this.type = type;
 	}
 	
-	public Object getNumber() {
+	public String getNumber() {
 		return number;
 	}
 	
-	public void setNumber(Object number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 	
