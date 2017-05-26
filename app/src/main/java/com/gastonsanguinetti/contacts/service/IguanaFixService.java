@@ -14,5 +14,6 @@ public interface IguanaFixService {
 	Call<List<Contact>> getContacts();
 	
 	@GET("contacts/{id}")
-	Call<List<Contact>> getContactDetails(@Path("id") String id);
+	Call<Contact> getContactDetails(@Path("id") String id);
+	
 }

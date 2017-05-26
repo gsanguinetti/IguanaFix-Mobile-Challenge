@@ -25,6 +25,8 @@ public class Contact implements Serializable {
 	private String lastName;
 	
 	private List<Phone> phones = null;
+	
+	private List<Address> addresses = null;
 
 	private String thumb;
 
@@ -78,6 +80,14 @@ public class Contact implements Serializable {
 		this.phones = phones;
 	}
 	
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+	
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
+	}
+	
 	public String getThumb() {
 		return thumb;
 	}
@@ -92,5 +102,9 @@ public class Contact implements Serializable {
 	
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+	
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
 }

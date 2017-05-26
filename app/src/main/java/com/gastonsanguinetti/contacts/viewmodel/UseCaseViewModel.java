@@ -24,7 +24,7 @@ public abstract class UseCaseViewModel<DATA> extends ViewModel {
 		if(data == null) {
 			useCaseStatus.setValue(Status.LOADING);
 			this.data = new MutableLiveData<>();
-			data.setValue(loadData());
+			doLoadData();
 		}
 		return data;
 	}
@@ -33,15 +33,15 @@ public abstract class UseCaseViewModel<DATA> extends ViewModel {
 		this.data.setValue(data);
 	}
 	
-	public Status getUseCaseStatus() {
-		return useCaseStatus.getValue();
+	public MutableLiveData<Status> getUseCaseStatus() {
+		return useCaseStatus;
 	}
 	
 	private void setUseCaseStatus(Status useCaseStatus) {
 		this.useCaseStatus.setValue(useCaseStatus);
 	}
 	
-	protected abstract DATA loadData();
+	protected abstract void doLoadData();
 	
 	protected void onSuccess(DATA data) {
 		setData(data);
@@ -51,4 +51,6 @@ public abstract class UseCaseViewModel<DATA> extends ViewModel {
 	protected void onError() {
 		setUseCaseStatus(Status.ERROR);
 	}
+	
+	
 }

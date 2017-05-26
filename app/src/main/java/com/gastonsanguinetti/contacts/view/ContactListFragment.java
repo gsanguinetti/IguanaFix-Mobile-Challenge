@@ -1,17 +1,30 @@
 package com.gastonsanguinetti.contacts.view;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.gastonsanguinetti.contacts.R;
+import com.gastonsanguinetti.contacts.model.Contact;
+import com.gastonsanguinetti.contacts.viewmodel.ContactListViewModel;
+import com.gastonsanguinetti.contacts.viewmodel.UseCaseViewModel;
 
-public class ContactListFragment extends Fragment {
+import java.util.List;
+
+public class ContactListFragment extends LifecycleFragment {
+	
+	View loadingLayout;
+	RecyclerView contactListRecyclerView;
+	ContactListAdapter contactListAdapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,10 +36,60 @@ public class ContactListFragment extends Fragment {
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		//Initialize toolbar
 		if(getActivity() instanceof AppCompatActivity) {
 			Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
 			((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 		}
+		
+		//Get views
+		contactListRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+		loadingLayout = view.findViewById(R.id.loading);
+		
+		//Initialize contact list
+		contactListRecyclerView.setHasFixedSize(true);
+		contactListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		
+		contactListAdapter = new ContactListAdapter();
+		contactListRecyclerView.setAdapter(contactListAdapter);
+		
+		//Create the viewmodel
+		final ContactListViewModel contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
+		
+		// Start observing events
+		contactListViewModel.getData().observe(this,  new Observer<List<Contact>>() {
+			@Override
+			public void onChanged(@Nullable List<Contact> contacts) {
+				contactListAdapter.setContacts(contacts);
+			}
+		});
+		
+		contactListViewModel.getUseCaseStatus().observe(this, new Observer<UseCaseViewModel.Status>() {
+			@Override
+			public void onChanged(@Nullable UseCaseViewModel.Status status) {
+				switch (status) {
+					
+					case LOADING:
+						loadingLayout.setVisibility(View.VISIBLE);
+						contactListRecyclerView.setVisibility(View.GONE);
+						break;
+					
+					case ERROR:
+						loadingLayout.setVisibility(View.GONE);
+						contactListRecyclerView.setVisibility(View.GONE);
+						break;
+					
+					case SUCCESS:
+						loadingLayout.setVisibility(View.GONE);
+						contactListRecyclerView.setVisibility(View.VISIBLE);
+						break;
+					
+					default: break;
+				}
+			}
+		});
+		
+		
 	}
 	
 }
